@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: spendwise_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-spendwise}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-spendwise123}
+      POSTGRES_DB: ${POSTGRES_DB:-spendwise}
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-spendwise} -d ${POSTGRES_DB:-spendwise}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  postgres_test:
+    image: postgres:15-alpine
+    container_name: spendwise_test_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: spendwise_test
+      POSTGRES_PASSWORD: spendwise_test123
+      POSTGRES_DB: spendwise_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spendwise_test -d spendwise_test"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+  postgres_test_data:
+    driver: local

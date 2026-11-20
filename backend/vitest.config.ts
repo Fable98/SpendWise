@@ -8,6 +8,6 @@ export default defineConfig({
     testTimeout: 30000,
     // Run only the consolidated suite so the in-memory session store
     // (a Map in auth.service.ts) is shared across all describe blocks.
-    include: ['src/tests/all.test.ts'],
+    include: ['src/tests/all.test.ts', 'src/tests/upi.test.ts'],
   },
 });

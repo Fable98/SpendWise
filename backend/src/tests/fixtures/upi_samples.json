@@ -1,0 +1,67 @@
+[
+  {
+    "description": "GPay notification with merchant and UTR",
+    "pkg": "com.google.android.apps.nbu.paisa.user",
+    "text": "Paid ₹450.00 to Starbucks Coffee. UPI Ref: 432589012345",
+    "expected": {
+      "amount": 450,
+      "type": "EXPENSE",
+      "merchant": "Starbucks Coffee",
+      "utr": "432589012345",
+      "confidence": 1.0
+    }
+  },
+  {
+    "description": "GPay notification without UTR",
+    "pkg": "com.google.android.apps.nbu.paisa.user",
+    "text": "You paid ₹1,250 to Blinkit",
+    "expected": {
+      "amount": 1250,
+      "type": "EXPENSE",
+      "merchant": "Blinkit",
+      "confidence": 0.92
+    }
+  },
+  {
+    "description": "GPay notification received money (income)",
+    "pkg": "com.google.android.apps.nbu.paisa.user",
+    "text": "Received ₹1,500 from Rahul Sharma. UPI Ref: 432589099887",
+    "expected": {
+      "amount": 1500,
+      "type": "INCOME",
+      "merchant": "Rahul Sharma",
+      "utr": "432589099887",
+      "confidence": 1.0
+    }
+  },
+  {
+    "description": "HDFC Bank debit SMS with balance and account number",
+    "pkg": "HDFCBK",
+    "text": "Sent Rs.450.00 from HDFC Bank A/c 4821 to Starbucks on 20-11-26 via UPI. Ref 432589012345. Avl Bal Rs 14,250.00",
+    "expected": {
+      "amount": 450,
+      "type": "EXPENSE",
+      "merchant": "Starbucks",
+      "utr": "432589012345",
+      "confidence": 0.95
+    }
+  },
+  {
+    "description": "SBI Bank debit SMS with transfer to Swiggy",
+    "pkg": "SBIINB",
+    "text": "Dear SBI User, A/c 9182 debited by Rs.285.50 on 20Nov26 transfer to Swiggy Ref No 432589099112. Bal: Rs 5,000",
+    "expected": {
+      "amount": 285.50,
+      "type": "EXPENSE",
+      "merchant": "Swiggy",
+      "utr": "432589099112",
+      "confidence": 0.95
+    }
+  },
+  {
+    "description": "Non-financial marketing notification",
+    "pkg": "com.google.android.apps.nbu.paisa.user",
+    "text": "Spin the wheel to win exciting cashback on your next recharge!",
+    "expected": null
+  }
+]

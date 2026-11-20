@@ -11,6 +11,8 @@ export function useDashboardSummary(year: number, month: number) {
       const res = await api.get(`/analytics/dashboard?year=${year}&month=${month}`);
       return res.data.data;
     },
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true,
   });
 }
 

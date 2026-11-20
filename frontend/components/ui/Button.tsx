@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
 }
 
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  isLoading = false,
-  leftIcon,
-  className,
-  children,
-  disabled,
-  ...props
-}: ButtonProps) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    size = 'md',
+    isLoading = false,
+    leftIcon,
+    className,
+    children,
+    disabled,
+    ...props
+  },
+  ref
+) {
   const base =
     'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-800 disabled:opacity-50 disabled:cursor-not-allowed';
 
@@ -43,6 +46,7 @@ export function Button({
 
   return (
     <button
+      ref={ref}
       className={cn(base, variants[variant], sizes[size], className)}
       disabled={disabled || isLoading}
       {...props}
@@ -51,4 +55,6 @@ export function Button({
       {children}
     </button>
   );
-}
+});
+
+Button.displayName = 'Button';

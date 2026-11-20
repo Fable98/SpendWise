@@ -22,6 +22,8 @@ export function useTransactions(filters: TransactionFilters = {}) {
       const res = await api.get(`/transactions?${params.toString()}`);
       return { transactions: res.data.data, meta: res.data.meta };
     },
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true,
   });
 }
 

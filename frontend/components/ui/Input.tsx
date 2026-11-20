@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
   hint?: string;
   leftElement?: React.ReactNode;
 }
 
-export function Input({ label, error, hint, leftElement, className, id, ...props }: InputProps) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { label, error, hint, leftElement, className, id, ...props },
+  ref
+) {
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-');
 
   return (
@@ -25,6 +28,7 @@ export function Input({ label, error, hint, leftElement, className, id, ...props
           </div>
         )}
         <input
+          ref={ref}
           id={inputId}
           className={cn(
             'w-full rounded-lg border bg-surface-700 text-white placeholder-gray-500',
@@ -44,4 +48,6 @@ export function Input({ label, error, hint, leftElement, className, id, ...props
       {hint && !error && <p className="text-xs text-gray-500">{hint}</p>}
     </div>
   );
-}
+});
+
+Input.displayName = 'Input';

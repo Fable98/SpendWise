@@ -151,11 +151,14 @@ function serializeTransaction(tx: {
   createdAt: Date;
   updatedAt: Date;
   category?: { id: string; name: string; type: TransactionType };
+  [key: string]: any;
 }) {
   // Always serialise to exactly 2 decimal places for consistent API output
   const amountStr = parseFloat(tx.amount.toString()).toFixed(2);
+  const confidenceNum = tx.confidence ? parseFloat(tx.confidence.toString()) : undefined;
   return {
     ...tx,
     amount: amountStr,
+    ...(confidenceNum !== undefined && { confidence: confidenceNum }),
   };
 }

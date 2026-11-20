@@ -12,6 +12,7 @@ import categoriesRoutes from './modules/categories/categories.routes';
 import transactionsRoutes from './modules/transactions/transactions.routes';
 import budgetsRoutes from './modules/budgets/budgets.routes';
 import analyticsRoutes from './modules/analytics/analytics.routes';
+import integrationsRoutes from './modules/integrations/upi/upi.routes';
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.use(
     origin: config.frontendUrl,
     credentials: true,
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-SpendWise-Token'],
   })
 );
 
@@ -51,6 +52,7 @@ app.use('/api/v1/categories', requireAuth, categoriesRoutes);
 app.use('/api/v1/transactions', requireAuth, transactionsRoutes);
 app.use('/api/v1/budgets', requireAuth, budgetsRoutes);
 app.use('/api/v1/analytics', requireAuth, analyticsRoutes);
+app.use('/api/v1/integrations', integrationsRoutes);
 
 // 404
 app.use((_req, res) => {

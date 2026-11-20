@@ -9,11 +9,18 @@ export function useAuth() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading, error } = useQuery<User>({
+  const { data: user, isLoading, error } = useQuery<User | null>({
     queryKey: ['auth', 'me'],
     queryFn: async () => {
-      const res = await api.get('/auth/me');
-      return res.data.data;
+      try {
+        const res = await api.get('/auth/me');
+        return res.data.data;
+      } catch (err: any) {
+        if (err?.response?.status === 401) {
+          return null;
+        }
+        throw err;
+      }
     },
     retry: false,
     staleTime: 5 * 60 * 1000,

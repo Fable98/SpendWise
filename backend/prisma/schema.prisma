@@ -7,50 +7,67 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  name         String
-  email        String        @unique
-  passwordHash String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  transactions Transaction[]
-  categories   Category[]
-  budgets      Budget[]
+  id                String             @id @default(uuid())
+  name              String
+  email             String             @unique
+  passwordHash      String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  transactions      Transaction[]
+  categories        Category[]
+  budgets           Budget[]
+  integrationTokens IntegrationToken[]
+  categoryRules     CategoryRule[]
 
   @@map("users")
 }
 
 model Category {
-  id           String          @id @default(uuid())
-  userId       String?
-  name         String
-  type         TransactionType
-  createdAt    DateTime        @default(now())
-  user         User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  transactions Transaction[]
-  budgets      Budget[]
+  id            String          @id @default(uuid())
+  userId        String?
+  name          String
+  type          TransactionType
+  createdAt     DateTime        @default(now())
+  user          User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  budgets       Budget[]
+  categoryRules CategoryRule[]
 
   @@map("categories")
 }
 
 model Transaction {
-  id              String          @id @default(uuid())
+  id              String            @id @default(uuid())
   userId          String
   categoryId      String
-  amount          Decimal         @db.Decimal(15, 2)
+  amount          Decimal           @db.Decimal(15, 2)
   type            TransactionType
   description     String?
   transactionDate DateTime
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  category        Category        @relation(fields: [categoryId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
+  // UPI / GPay Ingestion Fields
+  source          TransactionSource @default(MANUAL)
+  externalId      String?
+  fingerprint     String?
+  merchantName    String?
+  rawPayload      String?
+  confidence      Decimal?          @db.Decimal(3, 2)
+  syncStatus      SyncStatus        @default(PROCESSED)
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category        Category          @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, externalId])
+  @@index([userId, fingerprint])
+  @@index([userId, transactionDate, amount])
   @@index([userId])
   @@index([categoryId])
   @@index([transactionDate])
   @@index([userId, type])
   @@index([userId, transactionDate])
+  @@index([userId, source])
   @@map("transactions")
 }
 
@@ -72,7 +89,56 @@ model Budget {
   @@map("budgets")
 }
 
+model IntegrationToken {
+  id          String    @id @default(uuid())
+  userId      String
+  name        String
+  tokenPrefix String
+  tokenHash   String    @unique
+  lastUsedAt  DateTime?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tokenPrefix, isActive])
+  @@index([userId])
+  @@map("integration_tokens")
+}
+
+model CategoryRule {
+  id         String   @id @default(uuid())
+  userId     String?
+  categoryId String
+  keyword    String
+  priority   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, keyword])
+  @@index([userId])
+  @@index([keyword])
+  @@map("category_rules")
+}
+
 enum TransactionType {
   INCOME
   EXPENSE
+}
+
+enum TransactionSource {
+  MANUAL
+  GPAY_NOTIFICATION
+  BANK_SMS
+  GMAIL_RECEIPT
+  CSV_IMPORT
+}
+
+enum SyncStatus {
+  PROCESSED
+  PENDING_REVIEW
+  REJECTED
 }

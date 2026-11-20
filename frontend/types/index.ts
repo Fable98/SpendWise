@@ -1,5 +1,14 @@
 export type TransactionType = 'INCOME' | 'EXPENSE';
 
+export type TransactionSource =
+  | 'MANUAL'
+  | 'GPAY_NOTIFICATION'
+  | 'BANK_SMS'
+  | 'GMAIL_RECEIPT'
+  | 'CSV_IMPORT';
+
+export type SyncStatus = 'PROCESSED' | 'PENDING_REVIEW' | 'REJECTED';
+
 export interface User {
   id: string;
   name: string;
@@ -25,6 +34,30 @@ export interface Transaction {
   transactionDate: string;
   createdAt: string;
   updatedAt: string;
+  source?: TransactionSource;
+  externalId?: string | null;
+  merchantName?: string | null;
+  syncStatus?: SyncStatus;
+  category?: Category;
+}
+
+export interface IntegrationToken {
+  id: string;
+  name: string;
+  tokenPrefix: string;
+  rawToken?: string;
+  lastUsedAt: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface CategoryRule {
+  id: string;
+  userId: string | null;
+  categoryId: string;
+  keyword: string;
+  priority: number;
+  createdAt: string;
   category?: Category;
 }
 

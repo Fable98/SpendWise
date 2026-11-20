@@ -241,9 +241,26 @@ export default function TransactionsPage() {
                                 <ArrowDownRight className="w-3.5 h-3.5" />
                               )}
                             </div>
-                            <span className="text-sm text-white truncate max-w-xs">
-                              {tx.description || tx.category?.name || '—'}
-                            </span>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-sm text-white truncate max-w-xs">
+                                {tx.description || tx.category?.name || '—'}
+                              </span>
+                              {tx.source === 'GPAY_NOTIFICATION' && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                                  GPay
+                                </span>
+                              )}
+                              {tx.source === 'BANK_SMS' && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                                  UPI SMS
+                                </span>
+                              )}
+                              {tx.syncStatus === 'PENDING_REVIEW' && (
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                  Review
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-3.5 hidden sm:table-cell">
